@@ -7,10 +7,8 @@ namespace Miniprojekt1
 {
     class Program
     {
-
         static void Main(string[] args)
         {
-
             string currentDir = Environment.CurrentDirectory;
             List<Product> products = new List<Product>();
 
