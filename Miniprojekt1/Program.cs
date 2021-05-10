@@ -11,6 +11,7 @@ namespace Miniprojekt1
         static void Main(string[] args)
         {
 
+            string currentDir = Environment.CurrentDirectory;
             List<Product> products = new List<Product>();
 
             Laptop laptop1 = new Laptop("2018-08-22", "MacBook", "MacOs", "Silver", 400);
@@ -34,10 +35,9 @@ namespace Miniprojekt1
                 {
                     break;
                 }
-              //  Console.ForegroundColor = ConsoleColor.Gray;
                 else if (input == "l")
                 {
-                    string purchaseDate = DateCheck("Purchase Date");
+                    string purchaseDate = StringCheck("Purchase Date");
                     string modelName = StringCheck("Model Name");
                     string systemOperation = StringCheck("System Operation");
                     string color = StringCheck("Color");
@@ -47,7 +47,7 @@ namespace Miniprojekt1
                 }
                 else if (input == "m")
                 {
-                    string purchaseDate = DateCheck("Purchase Date");
+                    string purchaseDate = StringCheck("Purchase Date");
                     string modelName = StringCheck("Model Name");
                     string color = StringCheck("Color");
                     int price = IntCheck("Price");
@@ -55,42 +55,8 @@ namespace Miniprojekt1
                     products.Add(newProduct);
                 }
             }
-
-            ProductsPrintOut( products);
-
+            ProductsPrintOut(products);
             Console.ReadLine();
-        }
-
-        private static string DateCheck(string Name)
-        {
-            string StringInput;
-            while (true)
-            {
-                Console.Write($"Enter the {Name}: ");
-                StringInput = Console.ReadLine().Trim();
-                bool stringInputIsInt = int.TryParse(StringInput, out int value);
-                bool isValidDate = DateTime.TryParse(StringInput, out DateTime ValidDate);
-
-                if (String.IsNullOrEmpty(StringInput))
-                {
-                    WriteLineColor($"The {Name} cant be Empty, please try again ", ConsoleColor.Red);
-                }
-                else if (stringInputIsInt)
-                {
-                    WriteLineColor($"The {Name} cant be  a Number, please try again ", ConsoleColor.Red);
-                }
-                else if (!isValidDate)
-                {
-                    WriteLineColor($"The {Name} is not valide date, please try again ", ConsoleColor.Red);
-
-                }
-                else
-                {
-                    break;
-                }
-                //  Console.ResetColor();
-            }
-            return StringInput;
         }
 
         private static string StringCheck(string Name)
@@ -99,7 +65,7 @@ namespace Miniprojekt1
             while (true)
             {
                 Console.Write($"Enter the {Name}: ");
-                StringInput = Console.ReadLine().Trim();
+                StringInput = Console.ReadLine();
                 bool stringInputIsInt = int.TryParse(StringInput, out int value);
 
                 if (String.IsNullOrEmpty(StringInput))
@@ -110,13 +76,11 @@ namespace Miniprojekt1
                 {
                     Console.WriteLine($"The {Name} cant be a Number");
                     WriteLineColor($"The {Name} cant be  a Number", ConsoleColor.Red);
-
                 }
                 else
                 {
                     break;
                 }
-                //  Console.ResetColor();
             }
             return StringInput;
         }
@@ -127,7 +91,7 @@ namespace Miniprojekt1
             while (true)
             {
                 Console.Write($"Enter the {Name}: ");
-                string intCheck = Console.ReadLine().Trim();
+                string intCheck = Console.ReadLine();
                 if (int.TryParse(intCheck, out intCheckValue))
                 {
                     break;
@@ -137,15 +101,13 @@ namespace Miniprojekt1
                     WriteLineColor($"Wrong formate of the {Name}", ConsoleColor.Red);
 
                 }
-                //  Console.ResetColor();
             }
             return intCheckValue;
         }
 
-        private static void ProductsPrintOut( List<Product> products)
+        private static void ProductsPrintOut(List<Product> products)
         {
             int indexL = 0, indexM = 0;
-
             List<Product> sortedproducts = products.
                 OrderBy(product => product.GetType().Name).
                 ThenBy(product => product.PurchaseDate).
@@ -153,9 +115,7 @@ namespace Miniprojekt1
 
             string msgTitle = "\n\nPurchaseDate".PadRight(20) + "Model Name".PadRight(20) + "SystemOperation".PadRight(25) + "Color".PadRight(20) + "Price";
             Console.WriteLine(msgTitle);
-
             File.WriteAllText("ResultFile.txt", msgTitle + Environment.NewLine);
-
             string msg = "";
             foreach (Product prod in sortedproducts)
             {
@@ -166,11 +126,10 @@ namespace Miniprojekt1
                         msg = "\nLaptop Computers ";
                         Console.WriteLine(msg);
                         File.AppendAllText("ResultFile.txt", msg + Environment.NewLine);
-
                     }
                     indexL++;
                     msg = " - " + prod.PurchaseDate.PadRight(20) + prod.ModelName.PadRight(20) + (prod as Laptop).SystemOperation.PadRight(20) + prod.Color.PadRight(20) + (prod as Laptop).Price;
-                    WriteLineColor(msg, ColorChoice(prod.PurchaseDate));
+                    WriteLineColor(msg, DateValidation(prod.PurchaseDate));
                 }
                 else
                 {
@@ -182,16 +141,12 @@ namespace Miniprojekt1
                     }
                     indexM++;
                     msg = " - " + prod.PurchaseDate.PadRight(20) + prod.ModelName.PadRight(20) + prod.Color.PadRight(20) + (prod as Mobile).Price;
-                    WriteLineColor(msg, ColorChoice(prod.PurchaseDate));
+                    WriteLineColor(msg, DateValidation(prod.PurchaseDate));
                 }
-
                 File.AppendAllText("ResultFile.txt", msg + Environment.NewLine);
             }
         }
-
-        // public static int Diffsdays { get; set; }
-
-        static ConsoleColor ColorChoice(string purchaseDate)
+        static ConsoleColor DateValidation(string purchaseDate)
         {
             ConsoleColor colorW = ConsoleColor.White;
             DateTime nowDate = new DateTime();
@@ -207,7 +162,6 @@ namespace Miniprojekt1
                 if (difDays < 1080)
                 {
                     colorW = difDays < 900 ? ConsoleColor.White : difDays < 990 ? ConsoleColor.Yellow : ConsoleColor.Red;
-                    // Console.WriteLine("\n ValidDate " + ValidDate + " dif Days == " + difDays);
                 }
             }
             else
@@ -223,11 +177,7 @@ namespace Miniprojekt1
             Console.WriteLine(text);
             Console.ForegroundColor = ConsoleColor.White;
         }
-
-
-
     }
-
 
     class Product
     {
@@ -235,7 +185,6 @@ namespace Miniprojekt1
         public string ModelName { get; set; }
         public string Color { get; set; }
         public int Price { get; set; }
-
     }
 
     class Laptop : Product
@@ -265,16 +214,3 @@ namespace Miniprojekt1
 
 }
 
-
-/*
-                 {
-                    diffDate = nowDate - ValidDate;
-                    difDays = Convert.ToInt32(diffDate.TotalDays);
-                    if (difDays < 1095)
-                    {
-                        colorW = difDays < 915 ? ConsoleColor.White : difDays < 1005 ? ConsoleColor.Yellow : ConsoleColor.Red;
-                        Console.WriteLine(" ValidDate " + ValidDate + " difDays  " + difDays);
-                    }
-                }
-
-*/
